@@ -1,0 +1,77 @@
+CAPI=2:
+
+name : ::subservient:0.1.0
+
+filesets:
+  core:
+    files:
+      - rtl/subservient_rf_ram_if.v
+      - rtl/subservient_ram.v
+      - rtl/subservient_debug_switch.v
+      - rtl/subservient_core.v
+    file_type : verilogSource
+    depend : [serving]
+
+  mem_files:
+    files:
+      - sw/blinky.hex : {copyto : blinky.hex}
+      - sw/hello.hex  : {copyto : hello.hex}
+    file_type : user
+
+  tb:
+    files:
+      - tb/uart_decoder.v
+      - tb/subservient_tb.v
+    file_type : verilogSource
+    depend : [sky130_sram_macros, vlog_tb_utils]
+
+  soc:
+    files:
+      - rtl/subservient_gpio.v
+      - rtl/subservient.v
+    file_type : verilogSource
+
+targets:
+  default:
+    filesets : [soc]
+
+  lint:
+    default_tool : verilator
+    filesets : [core, soc]
+    tools:
+      verilator:
+        mode : lint-only
+    toplevel : subservient
+
+  sim: &sim
+    default_tool: icarus
+    filesets : [mem_files, core, soc, tb]
+    parameters :
+      - firmware
+      - memsize
+      - uart_baudrate
+    toplevel : subservient_tb
+
+  sim_hello:
+    <<: *sim
+    parameters :
+      - firmware=hello.hex
+      - memsize=1024
+      - uart_baudrate=115200
+
+parameters:
+  firmware:
+    datatype : file
+    description : Preload RAM with a hex file at runtime
+    paramtype : plusarg
+
+  memsize:
+    datatype    : int
+    default     : 1024
+    description : Memory size in bytes for RAM (default 1kiB)
+    paramtype   : vlogparam
+
+  uart_baudrate:
+    datatype : int
+    description : Treat gpio output as an UART with the specified baudrate (0 or omitted parameter disables UART decoding)
+    paramtype : plusarg
