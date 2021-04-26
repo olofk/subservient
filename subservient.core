@@ -18,6 +18,9 @@ filesets:
       - sw/hello.hex  : {copyto : hello.hex}
     file_type : user
 
+  openlane:
+    files:
+      - data/params.tcl : {file_type : tclSource}
   tb:
     files:
       - tb/uart_decoder.v
@@ -41,6 +44,13 @@ targets:
     tools:
       verilator:
         mode : lint-only
+    toplevel : subservient
+
+  sky130:
+    default_tool: openlane
+    filesets : [core, soc, openlane]
+    parameters :
+      - memsize
     toplevel : subservient
 
   sim: &sim
