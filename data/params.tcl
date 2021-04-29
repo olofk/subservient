@@ -3,7 +3,7 @@ set ::env(CLOCK_PORT) "i_clk"
 set ::env(DESIGN_IS_CORE) 0
 
 set ::env(FP_SIZING) "absolute"
-set ::env(DIE_AREA) "0 0 300 300"
+set ::env(DIE_AREA) "0 0 220 220"
 
 #set ::env(PL_TARGET_DENSITY) 0.1
 #set ::env(FP_CORE_UTIL) 1
