@@ -17,7 +17,7 @@ jobs:
           path: pdklite
       - run: echo "PDK_ROOT=$GITHUB_WORKSPACE/pdklite" >> $GITHUB_ENV
       - run: echo "EDALIZE_LAUNCHER=${GITHUB_WORKSPACE}/subservient/openlane_runner.py" >> $GITHUB_ENV
-      - run: pip3 install --user -e "git+https://github.com/asicbitch/edalize.git@openlane#egg=edalize"
+      - run: pip3 install --user -e "git+https://github.com/olofk/edalize.git#egg=edalize"
       - run: pip3 install fusesoc
       - run: docker pull efabless/openlane:v0.12
       - run: fusesoc library add serv https://github.com/olofk/serv
