@@ -3,9 +3,6 @@ on: [push]
 jobs:
   build-openlane:
     runs-on: ubuntu-latest
-    env:
-      OPENLANE_ROOT: not_really_used
-      PDK_ROOT: not_really_used
     steps:
       - name: Checkout subservient
         uses: actions/checkout@v2
