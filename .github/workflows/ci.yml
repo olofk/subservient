@@ -5,21 +5,14 @@ jobs:
     runs-on: ubuntu-latest
     env:
       OPENLANE_ROOT: not_really_used
+      PDK_ROOT: not_really_used
     steps:
       - name: Checkout subservient
         uses: actions/checkout@v2
         with:
           path: subservient
-      - name: Checkout pdk
-        uses: actions/checkout@v2
-        with:
-          repository: olofk/pdklite
-          path: pdklite
-      - run: echo "PDK_ROOT=$GITHUB_WORKSPACE/pdklite" >> $GITHUB_ENV
-      - run: echo "EDALIZE_LAUNCHER=${GITHUB_WORKSPACE}/subservient/openlane_runner.py" >> $GITHUB_ENV
-      - run: pip3 install --user -e "git+https://github.com/olofk/edalize.git#egg=edalize"
+      - run: echo "EDALIZE_LAUNCHER=${GITHUB_WORKSPACE}/subservient/.github/workflows/openlane_runner.py" >> $GITHUB_ENV
       - run: pip3 install fusesoc
-      - run: docker pull efabless/openlane:v0.12
       - run: fusesoc library add serv https://github.com/olofk/serv
       - run: fusesoc library add subservient $GITHUB_WORKSPACE/subservient
       - run: fusesoc run --target=sky130 subservient
