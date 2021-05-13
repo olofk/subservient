@@ -8,8 +8,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: subservient
-      - run: echo "EDALIZE_LAUNCHER=${GITHUB_WORKSPACE}/subservient/.github/workflows/openlane_runner.py" >> $GITHUB_ENV
-      - run: pip3 install fusesoc
+      - run: echo "EDALIZE_LAUNCHER='eda-container-wrapper --split-cwd-tail=1 --non-interactive openlane --'" >> $GITHUB_ENV
+      - run: pip3 install fusesoc eda-container-wrapper
       - run: fusesoc library add serv https://github.com/olofk/serv
       - run: fusesoc library add subservient $GITHUB_WORKSPACE/subservient
       - run: fusesoc run --target=sky130 subservient
