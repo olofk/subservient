@@ -6,10 +6,11 @@ jobs:
     steps:
       - name: Checkout subservient
         uses: actions/checkout@v2
+      - name: Build with Openlane
+        uses: librecores/ci-fusesoc-action@migrate-dockerized
         with:
-          path: subservient
-      - run: echo "EDALIZE_LAUNCHER='eda-container-wrapper --split-cwd-tail=1 --non-interactive openlane --'" >> $GITHUB_ENV
-      - run: pip3 install fusesoc eda-container-wrapper
-      - run: fusesoc library add serv https://github.com/olofk/serv
-      - run: fusesoc library add subservient $GITHUB_WORKSPACE/subservient
-      - run: fusesoc run --target=sky130 subservient
+          libraries: https://github.com/olofk/serv
+          core: subservient
+          target: sky130
+          tool: openlane
+
