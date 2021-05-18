@@ -21,6 +21,7 @@ filesets:
   openlane:
     files:
       - data/params.tcl : {file_type : tclSource}
+
   tb:
     files:
       - tb/uart_decoder.v
@@ -36,7 +37,7 @@ filesets:
 
 targets:
   default:
-    filesets : [soc]
+    filesets : [soc, core]
 
   lint:
     default_tool : verilator
