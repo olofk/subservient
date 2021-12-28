@@ -132,16 +132,21 @@ module subservient_tb;
    sram
      (
       .clk0   (clk),
-      .csb0   (!sram_wen),
-      .web0   (1'b0),
+      .csb0   (!(sram_wen | sram_ren)),
+      .web0   (!sram_wen),
       .wmask0 (wmask0),
-      .addr0  (waddr0),
+      .addr0  (sram_wen ? waddr0 : addr1),
       .din0   (din0),
-      .dout0  (),
-      .clk1   (clk),
-      .csb1   (!sram_ren),
-      .addr1  (addr1),
-      .dout1  (dout1));
+      .dout0  (dout1),
+      .clk1   (1'b0),
+      .csb1   (1'b1),
+      .addr1  (8'd0),
+      .dout1  ());
+
+   //Note: This should probably be a proper assert instead
+   always @(posedge clk)
+     if (sram_ren & sram_wen)
+       $display("$0t Error: Simultaneous SRAM read and write", $time);
 
    subservient
      #(.memsize  (memsize),

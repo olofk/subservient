@@ -173,15 +173,25 @@ module subservient_core
       .i_wb_ext_rdt (i_wb_rdt),
       .i_wb_ext_ack (i_wb_ack));
 
+   reg [aw-1:0]       waddr_r;
+   reg [rf_width-1:0] wdata_r;
+   reg 		      wen_r;
+
+   always @(posedge i_clk) begin
+      waddr_r <= rf_waddr;
+      wdata_r <= wdata;
+      wen_r   <= wen;
+   end
+
    subservient_ram
      #(.depth   (memsize))
    ram
      (// Wishbone interface
       .i_clk (i_clk),
       .i_rst (i_rst),
-      .i_waddr  (rf_waddr),
-      .i_wdata  (wdata),
-      .i_wen    (wen),
+      .i_waddr  (waddr_r),
+      .i_wdata  (wdata_r),
+      .i_wen    (wen_r),
       .i_raddr  (rf_raddr),
       .o_rdata  (rdata),
       .i_ren    (ren),
