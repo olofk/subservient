@@ -39,6 +39,7 @@ filesets:
   soc:
     files:
       - rtl/subservient_gpio.v
+      - rtl/subservient_dbg_if.v
       - rtl/subservient.v
     file_type : verilogSource
 
