@@ -9,6 +9,7 @@
 module subservient
   #(//Memory parameters
     parameter memsize  = 512,
+    parameter dbg_aw   = 0,
     parameter aw       = $clog2(memsize),
     //Enable CSR + interrupts
     parameter WITH_CSR = 0)
@@ -26,13 +27,8 @@ module subservient
 
    //Debug interface
    input wire 		i_debug_mode,
-   input wire [31:0] 	i_wb_dbg_adr,
-   input wire [31:0] 	i_wb_dbg_dat,
-   input wire [3:0] 	i_wb_dbg_sel,
-   input wire 		i_wb_dbg_we ,
-   input wire 		i_wb_dbg_stb,
-   output wire [31:0] 	o_wb_dbg_rdt,
-   output wire 		o_wb_dbg_ack,
+   input wire 		i_dbg_data,
+   input wire 		i_dbg_valid,
 
    //External I/O
    output wire 		o_gpio);
@@ -48,6 +44,14 @@ module subservient
    wire 	wb_gpio_rdt;
    assign wb_core_rdt = {31'd0, wb_gpio_rdt};
 
+   wire [31:0] 	wb_dbg_adr;
+   wire [31:0] 	wb_dbg_dat;
+   wire [3:0] 	wb_dbg_sel;
+   wire 	wb_dbg_we ;
+   wire 	wb_dbg_stb;
+   wire [31:0] 	wb_dbg_rdt;
+   wire 	wb_dbg_ack;
+
    subservient_gpio gpio
      (.i_wb_clk (i_clk),
       .i_wb_rst (i_rst),
@@ -57,6 +61,19 @@ module subservient
       .o_wb_rdt (wb_gpio_rdt),
       .o_wb_ack (wb_core_ack),
       .o_gpio   (o_gpio));
+
+   subservient_dbg_if dbg_if
+     (.i_clk       (i_clk),
+      .i_rst       (i_rst),
+      .i_dbg_data  (i_dbg_data),
+      .i_dbg_valid (i_dbg_valid),
+      .o_wb_adr    (wb_dbg_adr),
+      .o_wb_dat    (wb_dbg_dat),
+      .o_wb_sel    (wb_dbg_sel),
+      .o_wb_we     (wb_dbg_we ),
+      .o_wb_stb    (wb_dbg_stb),
+      .i_wb_rdt    (wb_dbg_rdt),
+      .i_wb_ack    (wb_dbg_ack));
 
    subservient_core
      #(.memsize (memsize),
@@ -76,13 +93,13 @@ module subservient
 
       //Debug interface
       .i_debug_mode (i_debug_mode),
-      .i_wb_dbg_adr (i_wb_dbg_adr),
-      .i_wb_dbg_dat (i_wb_dbg_dat),
-      .i_wb_dbg_sel (i_wb_dbg_sel),
-      .i_wb_dbg_we  (i_wb_dbg_we ),
-      .i_wb_dbg_stb (i_wb_dbg_stb),
-      .o_wb_dbg_rdt (o_wb_dbg_rdt),
-      .o_wb_dbg_ack (o_wb_dbg_ack),
+      .i_wb_dbg_adr (wb_dbg_adr),
+      .i_wb_dbg_dat (wb_dbg_dat),
+      .i_wb_dbg_sel (wb_dbg_sel),
+      .i_wb_dbg_we  (wb_dbg_we ),
+      .i_wb_dbg_stb (wb_dbg_stb),
+      .o_wb_dbg_rdt (wb_dbg_rdt),
+      .o_wb_dbg_ack (wb_dbg_ack),
 
       //Peripheral interface
       .o_wb_adr (wb_core_adr),
