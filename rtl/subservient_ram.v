@@ -34,15 +34,19 @@ module subservient_ram
     output wire [31:0] 	 o_wb_rdt,
     output reg 		 o_wb_ack);
 
+   reg [aw-1:0]		 rf_waddr_r;
+   reg [7:0]		 rf_wdata_r;
+   reg			 rf_wen_r;
+
    reg [1:0] 		bsel;
 
-   wire 		wb_en = i_wb_stb & !i_wen & !o_wb_ack;
+   wire 		wb_en = i_wb_stb & !rf_wen_r & !o_wb_ack;
 
    wire 		wb_we = i_wb_we & i_wb_sel[bsel];
 
-   assign o_sram_waddr = wb_en ? {i_wb_adr[aw-1:2],bsel} : i_waddr;
-   assign o_sram_wdata = wb_en ? i_wb_dat[bsel*8+:8]     : i_wdata;
-   assign o_sram_wen   = wb_en ? wb_we : i_wen;
+   assign o_sram_waddr = wb_en ? {i_wb_adr[aw-1:2],bsel} : rf_waddr_r;
+   assign o_sram_wdata = wb_en ? i_wb_dat[bsel*8+:8]     : rf_wdata_r;
+   assign o_sram_wen   = wb_en ? wb_we : rf_wen_r;
    assign o_sram_raddr = wb_en ? {i_wb_adr[aw-1:2],bsel} : i_raddr;
    assign o_sram_ren   = wb_en ? !i_wb_we : i_ren;
 
@@ -51,6 +55,10 @@ module subservient_ram
 
    reg 			regzero;
    always @(posedge i_clk) begin
+      rf_waddr_r <= i_waddr;
+      rf_wdata_r <= i_wdata;
+      rf_wen_r   <= i_wen;
+
       if (wb_en) bsel <= bsel + 2'd1;
       o_wb_ack <= wb_en & &bsel;
       if (bsel == 2'b01) wb_rdt[7:0]   <= i_sram_rdata;
