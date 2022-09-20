@@ -42,6 +42,21 @@ filesets:
       - rtl/subservient.v
     file_type : verilogSource
 
+  fpga:
+    files:
+      - rtl/subservient_generic_ram.v : {file_type : verilogSource}
+      - rtl/subservient_fpga.v : {file_type : verilogSource}
+    
+  fpga_tb:
+    files:
+      - tb/subservient_fpga_clock_gen_sim.v : {file_type : verilogSource}
+      - tb/subservient_fpga_tb.cpp : {file_type : cppSource}
+
+  nexys_a7:
+    files:
+      - data/nexys_a7.xdc : {file_type : xdc}
+      - rtl/subservient_nexys_a7_clock_gen.v : {file_type : verilogSource}
+
 targets:
   default:
     filesets : [soc, core]
@@ -68,6 +83,14 @@ targets:
       - memsize
     toplevel : subservient
 
+  nexys_a7:
+    default_tool: vivado
+    filesets : [core, soc, mem_files, fpga, nexys_a7]
+    parameters: [memfile]
+    tools:
+      vivado: {part : xc7a100tcsg324-1}
+    toplevel: subservient_fpga
+
   sim: &sim
     default_tool: icarus
     filesets : [mem_files, core, soc, tb]
@@ -84,11 +107,25 @@ targets:
       - memsize=1024
       - uart_baudrate=115200
 
+  fpga_tb:
+    default_tool : verilator
+    filesets : [core, soc, mem_files, fpga, fpga_tb]
+    parameters: [firmware, uart_baudrate=46080]
+    tools:
+      verilator:
+        verilator_options : [-trace]
+    toplevel: subservient_fpga
+
 parameters:
   firmware:
     datatype : file
     description : Preload RAM with a hex file at runtime
     paramtype : plusarg
+
+  memfile:
+    datatype : file
+    description : Preload RAM with a hex file at compile-time
+    paramtype : vlogparam
 
   memsize:
     datatype    : int
