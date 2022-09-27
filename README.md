@@ -5,6 +5,8 @@ Small SERV-based SoC primarily for OpenMPW tapeout
 
 Subservient is a small SoClet around the award-winning SERV, the world's smallest RISC-V CPU intended to be used for ASIC implementations. The SoClet exposes a port intended to be connected to be connected to an SRAM used for both the register file and data/instruction memory, a debug interface for external access to the SoC memory map and GPIO.
 
+[This project has been primarily funded through the NGI0 PET Fund, a fund established by NLnet with financial support from the European Commission's Next Generation Internet programme, under the aegis of DG Communications Networks, Content and Technology under grant agreement No 825310.](https://nlnet.nl/project/Edalize-ASIC/)
+
 ![Interfaces](doc/subservient_externals.png)
 
 ## Architecture
