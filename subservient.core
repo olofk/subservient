@@ -24,10 +24,11 @@ filesets:
 
   tb:
     files:
+      - rtl/subservient_generic_ram.v
       - tb/uart_decoder.v
       - tb/subservient_tb.v
     file_type : verilogSource
-    depend : [sky130_sram_macros, vlog_tb_utils]
+    depend : [vlog_tb_utils]
 
   soc:
     files:

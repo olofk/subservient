@@ -111,37 +111,17 @@ module subservient_tb;
 
    uart_decoder uart_decoder (baudrate, q);
 
-   //Adapt the 8-bit SRAM interface from subservient to the 32-bit OpenRAM instance
-   reg [1:0] sram_bsel;
-   always @(posedge clk) begin
-      sram_bsel  <= sram_raddr[1:0];
-   end
-
-   wire [3:0] wmask0 = 4'd1 << sram_waddr[1:0];
-   wire [7:0] waddr0 = sram_waddr[9:2]; //256 32-bit words = 1kB
-   wire [31:0] din0 = {4{sram_wdata}}; //Mirror write data to all byte lanes
-
-   wire [7:0]  addr1 = sram_raddr[9:2];
-   wire [31:0] dout1;
-   assign sram_rdata = dout1[sram_bsel*8+:8]; //Pick the right byte from the read data
-
-   sky130_sram_1kbyte_1rw1r_32x256_8
-     #(// FIXME: This delay is arbitrary.
-       .DELAY (3),
-       .VERBOSE (0))
-   sram
-     (
-      .clk0   (clk),
-      .csb0   (!(sram_wen | sram_ren)),
-      .web0   (!sram_wen),
-      .wmask0 (wmask0),
-      .addr0  (sram_wen ? waddr0 : addr1),
-      .din0   (din0),
-      .dout0  (dout1),
-      .clk1   (1'b0),
-      .csb1   (1'b1),
-      .addr1  (8'd0),
-      .dout1  ());
+   subservient_generic_ram
+     #(.depth (memsize))
+   memory
+     (.i_clk   (clk),
+      .i_rst   (rst),
+      .i_waddr (sram_waddr),
+      .i_wdata (sram_wdata),
+      .i_wen   (sram_wen),
+      .i_raddr (sram_raddr),
+      .o_rdata (sram_rdata),
+      .i_ren   (sram_ren));
 
    //Note: This should probably be a proper assert instead
    always @(posedge clk)
