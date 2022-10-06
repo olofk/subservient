@@ -18,9 +18,10 @@ filesets:
       - sw/hello.hex  : {copyto : hello.hex}
     file_type : user
 
-  openlane:
+  sky130:
     files:
-      - data/params.tcl : {file_type : tclSource}
+      - data/openlane_common.tcl : {file_type : tclSource}
+      - data/sky130.tcl : {file_type : tclSource}
 
   tb:
     files:
@@ -50,7 +51,7 @@ targets:
 
   sky130:
     default_tool: openlane
-    filesets : [core, soc, openlane]
+    filesets : [core, soc, sky130]
     parameters :
       - memsize
     toplevel : subservient

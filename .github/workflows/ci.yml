@@ -1,7 +1,7 @@
-name: build-openlane-sky130
+name: build-openlane
 on: [push]
 jobs:
-  build-openlane:
+  build-openlane-sky130:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout subservient
