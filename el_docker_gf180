@@ -1,0 +1,79 @@
+#!/usr/bin/python3
+import os
+import shutil
+import subprocess
+import sys
+import logging
+import shlex
+
+logger = logging.getLogger(__name__)
+symbiflow_init = "bash -lec {}"
+
+# fmt: off
+containers = [
+    {'tool': 'flow.tcl',                  'image':  'edalize/openlane-gf180mcu:2022.09.16',           'init': '', 'vendor': '', 'part': ''},
+]
+# fmt: on
+
+tool = sys.argv[1]
+toolname = os.path.basename(tool)
+
+# If it's in the container list, wrap with Docker
+if [c for c in containers if c["tool"] == toolname]:
+    (build_root, work) = os.path.split(os.getcwd())
+    dockerEnv = ""
+    for k in os.environ:
+        dockerEnv = dockerEnv + "-e " + k + "=" " + os.environ[k] + " " "
+
+    runtool = os.path.relpath(os.path.realpath(tool), os.getcwd())
+    for c in containers:
+        # Vendor neutral
+        if c["tool"] == toolname and c["vendor"] == "":
+            image = c["image"]
+            init = c["init"]
+            break
+        # Vendor specific toolchain
+        elif (
+            c["tool"] == toolname
+            and c["vendor"] == os.environ.get("EDALIZE_VENDOR")
+            and os.environ.get("EDALIZE_PART") in c["part"]
+        ):
+            image = c["image"]
+            init = c["init"]
+            break
+        else:
+            image = ""
+            init = ""
+
+    if image:
+        logger.info("INFO: Will use image '{}' with init '{}'".format(image, init))
+    else:
+        logger.error("ERROR: Tool {} not found in container list.".format(toolname))
+        exit(1)
+
+    prefix = [
+        "docker",
+        "run",
+        "--rm",
+        "-v",
+        build_root + ":/src",
+        #    '-e', dockerEnv,
+        "-u",
+        f"{os.getuid()}:{os.getgid()}",
+        "-w",
+        "/src/" + work,
+        image,
+    ]
+    if init:
+        c = init.format(shlex.quote(runtool + " " + shlex.join(sys.argv[2:])))
+    elif tool == "verilator":
+        c = shlex.join(sys.argv[2:])
+    else:
+        c = runtool + " " + shlex.join(sys.argv[2:])
+    cmd = prefix + shlex.split(c)
+# Otherwise, run it locally
+else:
+    cmd = sys.argv[1:]
+
+logger.info("INFO: Wrapper Command: ".format(" ".join(cmd)))
+sys.exit(subprocess.call(cmd, env=os.environ))

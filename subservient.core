@@ -23,6 +23,11 @@ filesets:
       - data/openlane_common.tcl : {file_type : tclSource}
       - data/sky130.tcl : {file_type : tclSource}
 
+  gf180:
+    files:
+      - data/openlane_common.tcl : {file_type : tclSource}
+      - data/gf180.tcl : {file_type : tclSource}
+
   tb:
     files:
       - rtl/subservient_generic_ram.v
@@ -52,6 +57,13 @@ targets:
   sky130:
     default_tool: openlane
     filesets : [core, soc, sky130]
+    parameters :
+      - memsize
+    toplevel : subservient
+
+  gf180:
+    default_tool: openlane
+    filesets : [core, soc, gf180]
     parameters :
       - memsize
     toplevel : subservient
