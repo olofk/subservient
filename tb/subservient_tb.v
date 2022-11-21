@@ -35,8 +35,8 @@ module subservient_tb;
 
    wire q;
 
-   always  #5 clk <= !clk;
-   initial #62 rst <= 1'b0;
+   always  #5000 clk <= !clk;
+   initial #300000000 rst <= 1'b0;
 
    vlog_tb_utils vtu();
 
@@ -75,7 +75,7 @@ module subservient_tb;
 
    initial begin
       $display("Setting debug mode");
-      debug_mode <= 1'b1;
+      debug_mode <= 1'b1;/*
       if ($value$plusargs("firmware=%s", firmware_file)) begin
 	 $display("Writing %0s to SRAM", firmware_file);
 	 $readmemh(firmware_file, mem);
@@ -104,7 +104,7 @@ module subservient_tb;
 	 wb_dbg_write32(adr, tmp_dat);
       end
       repeat (10) @(posedge clk);
-
+*/
       $display("Done writing %0d bytes to SRAM. Turning off debug mode", idx);
       debug_mode <= 1'b0;
    end
@@ -127,6 +127,26 @@ module subservient_tb;
    always @(posedge clk)
      if (sram_ren & sram_wen)
        $display("$0t Error: Simultaneous SRAM read and write", $time);
+
+   wire  sclk;
+   wire  cs_n;
+   wire  mosi;
+   wire  miso;
+
+   localparam flash_init_file = "hello.ubvh";
+
+   s25fl128s
+     #(.mem_file_name (flash_init_file),
+       .AddrRANGE     (24'h0000FF))
+   flash
+     (
+      .SCK     (sclk),
+      .SI      (mosi),
+      .CSNeg   (cs_n),
+      .HOLDNeg (), //Internal pull-up
+      .WPNeg   (), //Internal pull-up
+      .SO      (miso),
+      .RSTNeg (1'b1));
 
    subservient
      #(.memsize  (memsize),
@@ -155,6 +175,12 @@ module subservient_tb;
       .o_wb_dbg_ack (wb_dbg_ack),
 
       // External I/O
+      .o_sclk (sclk),
+      .o_cs_n (cs_n),
+      .o_mosi (mosi),
+      .i_miso (miso),
       .o_gpio (q));
 
+   pulldown(miso);
+   
 endmodule

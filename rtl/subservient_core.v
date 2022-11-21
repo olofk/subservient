@@ -194,13 +194,31 @@ module subservient_core
       .o_sram_ren   (o_sram_ren),
 
       .i_wb_adr (wb_mem_adr[$clog2(memsize)-1:2]),
-      .i_wb_stb (wb_mem_stb),
+      .i_wb_stb (wb_mem_stb & !wb_mem_adr[29]),
       .i_wb_we  (wb_mem_we) ,
       .i_wb_sel (wb_mem_sel),
       .i_wb_dat (wb_mem_dat),
-      .o_wb_rdt (wb_mem_rdt),
-      .o_wb_ack (wb_mem_ack));
+      .o_wb_rdt (wb_ram_rdt),
+      .o_wb_ack (wb_ram_ack));
 
+   assign wb_mem_rdt = wb_mem_adr[29] ? wb_rom_rdt : wb_ram_rdt;
+   assign wb_mem_ack = wb_ram_ack | wb_rom_ack;
+   
+   wire [31:0]	 wb_ram_rdt;
+   wire [31:0]	 wb_rom_rdt;
+   wire		 wb_ram_ack;
+   wire		 wb_rom_ack;
+   
+   wb_bootrom
+     #(.DEPTH (1024),             // Memory size in bytes
+       .MEMFILE ("spi_uimage_loader.hex"))
+   bootrom
+     (.wb_clk_i (i_clk),
+      .wb_rst_i (i_rst),
+      .wb_adr_i (wb_mem_adr[8:0]),
+      .wb_stb_i (wb_mem_stb & wb_mem_adr[29]),
+      .wb_dat_o (wb_rom_rdt),
+      .wb_ack_o (wb_rom_ack));
    localparam RF_L2W = $clog2(rf_width);
 
    wire 		   rf_wreq;
@@ -246,7 +264,7 @@ module subservient_core
       .o_ren    (ren));
 
    serv_top
-     #(.RESET_PC (32'h0000_0000),
+     #(.RESET_PC (32'h2000_0000),
        .RESET_STRATEGY (RESET_STRATEGY),
        .WITH_CSR (WITH_CSR))
    cpu

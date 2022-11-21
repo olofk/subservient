@@ -8,14 +8,17 @@ filesets:
       - rtl/subservient_rf_ram_if.v
       - rtl/subservient_ram.v
       - rtl/subservient_debug_switch.v
+      - rtl/subservient_rom.v
       - rtl/subservient_core.v
     file_type : verilogSource
     depend : [serving]
 
   mem_files:
     files:
+      - sw/spi_uimage_loader.hex : {copyto : .}
       - sw/blinky.hex : {copyto : blinky.hex}
       - sw/hello.hex  : {copyto : hello.hex}
+      - sw/hello.ubvh : {copyto : .}
     file_type : user
 
   sky130:
@@ -32,6 +35,7 @@ filesets:
     files:
       - rtl/subservient_generic_ram.v
       - tb/uart_decoder.v
+      - tb/s25fl128s.v
       - tb/subservient_tb.v
     file_type : verilogSource
     depend : [vlog_tb_utils]
@@ -41,6 +45,7 @@ filesets:
       - rtl/subservient_gpio.v
       - rtl/subservient.v
     file_type : verilogSource
+    depend : [simple_spi]
 
   fpga:
     files:
@@ -98,6 +103,9 @@ targets:
       - firmware
       - memsize
       - uart_baudrate
+    tools:
+      icarus:
+        timescale: 1ns/1ps
     toplevel : subservient_tb
 
   sim_hello:
@@ -105,7 +113,7 @@ targets:
     parameters :
       - firmware=hello.hex
       - memsize=1024
-      - uart_baudrate=115200
+      - uart_baudrate=113379 #115200
 
   fpga_tb:
     default_tool : verilator

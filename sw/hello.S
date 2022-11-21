@@ -40,7 +40,7 @@ next_char:
 	beqz	t0, loop
 
 	/* Bitbanged UART loop */
-	ori	t0, t0, 0x100
+	ori	t0, t0, 0x300
 	slli	t0, t0, 1
 1:	sb	t0, 0(a0)
 	srli	t0, t0, 1
@@ -75,4 +75,4 @@ next_char:
 
 str:
 	.section .data
-	.string "Hi! I'm subservient\n"
+	.string "Hi I'm subservient\n"

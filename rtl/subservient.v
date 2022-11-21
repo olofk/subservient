@@ -35,6 +35,10 @@ module subservient
    output wire 		o_wb_dbg_ack,
 
    //External I/O
+   output wire		o_sclk,
+   output wire		o_cs_n,
+   output wire		o_mosi,
+   input wire		i_miso,
    output wire 		o_gpio);
 
    wire [31:0] 	wb_core_adr;
@@ -43,21 +47,46 @@ module subservient
    wire 	wb_core_we;
    wire 	wb_core_stb;
    wire [31:0] 	wb_core_rdt;
-   wire 	wb_core_ack;
+   wire		wb_spi_ack;
+   wire		wb_gpio_ack;
+   wire 	wb_core_ack = wb_spi_ack | wb_gpio_ack;
 
    wire 	wb_gpio_rdt;
-   assign wb_core_rdt = {31'd0, wb_gpio_rdt};
+   wire [7:0]	wb_spi_rdt;
+   
+   assign wb_core_rdt = {24'd0, wb_core_adr[31] ? wb_spi_rdt : {7'd0,wb_gpio_rdt}};
+   wire		wb_gpio_stb = wb_core_stb & !wb_core_adr[31];
+   wire		wb_spi_stb  = wb_core_stb &  wb_core_adr[31];
+   
 
    subservient_gpio gpio
      (.i_wb_clk (i_clk),
       .i_wb_rst (i_rst),
       .i_wb_dat (wb_core_dat[0]),
       .i_wb_we  (wb_core_we),
-      .i_wb_stb (wb_core_stb),
+      .i_wb_stb (wb_gpio_stb),
       .o_wb_rdt (wb_gpio_rdt),
-      .o_wb_ack (wb_core_ack),
+      .o_wb_ack (wb_gpio_ack),
       .o_gpio   (o_gpio));
 
+   simple_spi spi
+     (// Wishbone slave interface
+      .clk_i  (i_clk),
+      .rst_i  (i_rst),
+      .adr_i  (wb_core_adr[4:2]),
+      .dat_i  (wb_core_dat[7:0]),
+      .we_i   (wb_core_we),
+      .cyc_i  (1'b1),
+      .stb_i  (wb_spi_stb),
+      .dat_o  (wb_spi_rdt),
+      .ack_o  (wb_spi_ack),
+      .inta_o (),
+      // SPI interface
+      .sck_o  (o_sclk),
+      .ss_o   (o_cs_n),
+      .mosi_o (o_mosi),
+      .miso_i (i_miso));
+   
    subservient_core
      #(.memsize (memsize),
        .WITH_CSR (WITH_CSR))
