@@ -215,7 +215,7 @@ module subservient_core
    bootrom
      (.wb_clk_i (i_clk),
       .wb_rst_i (i_rst),
-      .wb_adr_i (wb_mem_adr[8:0]),
+      .wb_adr_i ({23'd0,wb_mem_adr[8:0]}),
       .wb_stb_i (wb_mem_stb & wb_mem_adr[29]),
       .wb_dat_o (wb_rom_rdt),
       .wb_ack_o (wb_rom_ack));
@@ -266,6 +266,8 @@ module subservient_core
    serv_top
      #(.RESET_PC (32'h2000_0000),
        .RESET_STRATEGY (RESET_STRATEGY),
+       .COMPRESSED (1),
+       .ALIGN (1),
        .WITH_CSR (WITH_CSR))
    cpu
      (
