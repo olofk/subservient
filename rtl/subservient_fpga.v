@@ -6,7 +6,7 @@ module subservient_fpga
  output wire q);
 
    parameter memfile = "hello.hex";
-   parameter memsize = 1024;
+   parameter memsize = 8388608;
    localparam aw    = $clog2(memsize);
 
    wire      clk;

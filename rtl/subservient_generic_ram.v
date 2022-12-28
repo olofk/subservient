@@ -19,8 +19,12 @@ module subservient_generic_ram
       o_rdata <= i_ren ? mem[i_raddr] : 8'bx;
    end
 
+   reg [1023:0] firmware_file;
    initial
-     if(|memfile) begin
+     if ($value$plusargs("firmware=%s", firmware_file)) begin
+	$display("Writing %0s to SRAM", firmware_file);
+	$readmemh(firmware_file, mem);
+     end else if(|memfile) begin
 	$display("Preloading %m from %s", memfile);
 	$readmemh(memfile, mem);
      end

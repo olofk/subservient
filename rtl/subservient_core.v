@@ -245,6 +245,28 @@ module subservient_core
       .i_rdata  (rdata),
       .o_ren    (ren));
 
+   wire sig_en  = (wb_dbus_adr[31:28] == 4'h8) & wb_dbus_stb & wb_dbus_ack;
+   wire	halt_en = (wb_dbus_adr[31:28] == 4'h9) & wb_dbus_stb & wb_dbus_ack;
+
+   reg [1023:0]	signature_file;
+   integer	f = 0;
+
+   initial
+     /* verilator lint_off WIDTH */
+     if ($value$plusargs("signature=%s", signature_file)) begin
+	$display("Writing signature to %0s", signature_file);
+	f = $fopen(signature_file, "w");
+     end
+   /* verilator lint_on WIDTH */
+
+   always @(posedge i_clk)
+     if (sig_en & (f != 0))
+       $fwrite(f, "%c", wb_dbus_dat[7:0]);
+     else if(halt_en) begin
+	$display("Test complete");
+	$finish;
+     end
+
    serv_top
      #(.RESET_PC (32'h0000_0000),
        .RESET_STRATEGY (RESET_STRATEGY),
