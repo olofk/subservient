@@ -16,7 +16,7 @@ module subservient_generic_ram
 
    always @(posedge i_clk) begin
       if (i_wen) mem[i_waddr]   <= i_wdata;
-      o_rdata <= mem[i_raddr];
+      o_rdata <= i_ren ? mem[i_raddr] : 8'bx;
    end
 
    initial
