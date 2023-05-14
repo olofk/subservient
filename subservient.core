@@ -10,7 +10,7 @@ filesets:
       - rtl/subservient_debug_switch.v
       - rtl/subservient_core.v
     file_type : verilogSource
-    depend : [serving]
+    depend : ["<=serving-1.2.1"]
 
   mem_files:
     files:
