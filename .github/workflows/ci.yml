@@ -13,7 +13,7 @@ jobs:
           path: subservient
       - run: echo "EDALIZE_LAUNCHER=el_docker" >> $GITHUB_ENV
       - run: pip3 install fusesoc
-      - run: fusesoc library add serv https://github.com/olofk/serv
+      - run: fusesoc library add --sync-version=1.2.1 serv https://github.com/olofk/serv
       - run: fusesoc library add $REPO $GITHUB_WORKSPACE/$REPO
       - run: fusesoc run --target=sky130 $VLNV
 
@@ -29,6 +29,6 @@ jobs:
           path: subservient
       - run: echo "EDALIZE_LAUNCHER=$(realpath subservient/el_docker_gf180)" >> $GITHUB_ENV
       - run: pip3 install fusesoc
-      - run: fusesoc library add serv https://github.com/olofk/serv
+      - run: fusesoc library add --sync-version=1.2.1 serv https://github.com/olofk/serv
       - run: fusesoc library add $REPO $GITHUB_WORKSPACE/$REPO
       - run: fusesoc run --target=gf180 $VLNV
