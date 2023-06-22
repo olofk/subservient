@@ -3,16 +3,19 @@ on: [push]
 jobs:
   build-openlane-sky130:
     runs-on: ubuntu-latest
+    env:
+      REPO : subservient
+      VLNV : subservient
     steps:
-      - name: Checkout subservient
-        uses: actions/checkout@v2
-      - name: Build with Openlane
-        uses: librecores/ci-fusesoc-action@migrate-dockerized
+      - name: Checkout repo
+        uses: actions/checkout@v3
         with:
-          libraries: https://github.com/olofk/serv
-          core: subservient
-          target: sky130
-          tool: openlane
+          path: subservient
+      - run: echo "EDALIZE_LAUNCHER=el_docker" >> $GITHUB_ENV
+      - run: pip3 install fusesoc
+      - run: fusesoc library add serv https://github.com/olofk/serv
+      - run: fusesoc library add $REPO $GITHUB_WORKSPACE/$REPO
+      - run: fusesoc run --target=sky130 $VLNV
 
   build-openlane-gf180:
     runs-on: ubuntu-latest
