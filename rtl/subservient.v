@@ -24,16 +24,6 @@ module subservient
    input wire [7:0] 	i_sram_rdata,
    output wire 		o_sram_ren,
 
-   //Debug interface
-   input wire 		i_debug_mode,
-   input wire [31:0] 	i_wb_dbg_adr,
-   input wire [31:0] 	i_wb_dbg_dat,
-   input wire [3:0] 	i_wb_dbg_sel,
-   input wire 		i_wb_dbg_we ,
-   input wire 		i_wb_dbg_stb,
-   output wire [31:0] 	o_wb_dbg_rdt,
-   output wire 		o_wb_dbg_ack,
-
    //External I/O
    output wire 		o_gpio);
 
@@ -73,16 +63,6 @@ module subservient
       .o_sram_raddr (o_sram_raddr),
       .i_sram_rdata (i_sram_rdata),
       .o_sram_ren   (o_sram_ren),
-
-      //Debug interface
-      .i_debug_mode (i_debug_mode),
-      .i_wb_dbg_adr (i_wb_dbg_adr),
-      .i_wb_dbg_dat (i_wb_dbg_dat),
-      .i_wb_dbg_sel (i_wb_dbg_sel),
-      .i_wb_dbg_we  (i_wb_dbg_we ),
-      .i_wb_dbg_stb (i_wb_dbg_stb),
-      .o_wb_dbg_rdt (o_wb_dbg_rdt),
-      .o_wb_dbg_ack (o_wb_dbg_ack),
 
       //Peripheral interface
       .o_wb_adr (wb_core_adr),
