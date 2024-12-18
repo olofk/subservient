@@ -1,6 +1,7 @@
 CAPI=2:
 
-name : ::subservient:0.1.0
+name : ::subservient:0.2.0
+description: Minimal SERV-based SoC for ASIC implementation
 
 filesets:
   core:
