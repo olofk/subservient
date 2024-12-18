@@ -38,35 +38,6 @@ module subservient_core
 
    localparam rf_width = 8;
 
-   wire [31:0] 	wb_ibus_adr;
-   wire 	wb_ibus_stb;
-   wire [31:0] 	wb_ibus_rdt;
-   wire 	wb_ibus_ack;
-
-   wire [31:0] 	wb_dbus_adr;
-   wire [31:0] 	wb_dbus_dat;
-   wire [3:0] 	wb_dbus_sel;
-   wire 	wb_dbus_we;
-   wire 	wb_dbus_stb;
-   wire [31:0] 	wb_dbus_rdt;
-   wire 	wb_dbus_ack;
-
-   wire [31:0] 	wb_mux_adr;
-   wire [31:0] 	wb_mux_dat;
-   wire [3:0] 	wb_mux_sel;
-   wire 	wb_mux_we;
-   wire 	wb_mux_stb;
-   wire [31:0] 	wb_mux_rdt;
-   wire 	wb_mux_ack;
-
-   wire [31:0] 	wb_dmem_adr;
-   wire [31:0] 	wb_dmem_dat;
-   wire [3:0] 	wb_dmem_sel;
-   wire 	wb_dmem_we;
-   wire 	wb_dmem_stb;
-   wire [31:0] 	wb_dmem_rdt;
-   wire 	wb_dmem_ack;
-
    wire [31:0] 	wb_mem_adr;
    wire [31:0] 	wb_mem_dat;
    wire [3:0] 	wb_mem_sel;
@@ -114,7 +85,7 @@ module subservient_core
 
    servile
      #(.reset_strategy (RESET_STRATEGY),
-       .rf_width (8),
+       .rf_width (rf_width),
        .with_csr (WITH_CSR))
    servile
      (
