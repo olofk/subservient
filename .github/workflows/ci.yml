@@ -1,5 +1,9 @@
 name: build-openlane
-on: [push]
+
+on:
+  push:
+  workflow_dispatch: # Allow manual triggering
+
 jobs:
   build-openlane-sky130:
     runs-on: ubuntu-latest
