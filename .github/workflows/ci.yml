@@ -19,7 +19,7 @@ jobs:
       - run: pip3 install fusesoc
       - run: fusesoc library add https://github.com/olofk/serv
       - run: fusesoc library add $GITHUB_WORKSPACE/$REPO
-      - run: fusesoc run --target=sky130 $VLNV
+      - run: fusesoc --verbose run --target=sky130 $VLNV
 
   build-openlane-gf180:
     runs-on: ubuntu-latest
@@ -35,4 +35,4 @@ jobs:
       - run: pip3 install fusesoc
       - run: fusesoc library add https://github.com/olofk/serv
       - run: fusesoc library add $GITHUB_WORKSPACE/$REPO
-      - run: fusesoc run --target=gf180 $VLNV
+      - run: fusesoc --verbose run --target=gf180 $VLNV
