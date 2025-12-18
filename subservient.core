@@ -1,7 +1,8 @@
 CAPI=2:
 
-name : ::subservient:0.2.0
+name : award-winning:soc:subservient:0.2.1
 description: Minimal SERV-based SoC for ASIC implementation
+license: Apache-2.0
 
 filesets:
   core:
@@ -11,7 +12,7 @@ filesets:
       - rtl/subservient_debug_switch.v
       - rtl/subservient_core.v
     file_type : verilogSource
-    depend : [">=servile-1.3.0"]
+    depend : [">=award-winning:serv:servile-1.4.0"]
 
   mem_files:
     files:
@@ -35,7 +36,7 @@ filesets:
       - tb/uart_decoder.v
       - tb/subservient_tb.v
     file_type : verilogSource
-    depend : [vlog_tb_utils]
+    depend : [fusesoc:utils:vlog_tb_utils]
 
   soc:
     files:
